@@ -1,17 +1,18 @@
-# zasnut
+# gruppy
 
-This is the repository for zasnut, an open-source tab suspend extension
-for web browsers.
+This is the repository for gruppy, an open-source set of shortcuts
+for Chrome tab groups.
 
-The Kickstarter may be dead, but the extension was completed anyways.
+When this extension is installed, tabs can be added or removed from
+tab groups via shortcut keys.
 
-When this extension is installed, tabs will automatically unload around
-2 minutes after being de-selected.
+An omnibox search is also implemented to navigate tab groups more
+efficiently.
 
 
 ## Design goals
 
-  * Pico weight - extremely light, ~20 lines of code.
+  * Pico weight - extremely light, ~40 lines of code.
   * Easy to modify
   * Easy to audit - no minification, no obfuscation, no bullshit.
   * Manifest V3 - this requires Chrome 88 or higher, but is reasonably future proof.
@@ -27,15 +28,11 @@ When this extension is installed, tabs will automatically unload around
 
 **BSD**
 
-This was designed to be a drop-in library for other extensions - if you are interested
-in bundling zasnut with your extension, please pay special attention to the 3rd clause
-of the BSD license.
-
 Other licenses may be granted on request.
 
 ## Chrome Store
 
-Zasnut is available on the [Chrome Web Store](http://zasnut.xyz) for "Google Trusted Testers" only,
+Gruppy is available on the [Chrome Web Store] for "Google Trusted Testers" only,
 for their convenience.
 
 If you would like access, please establish a human relationship with me. Alternatively,
