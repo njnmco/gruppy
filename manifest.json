@@ -9,20 +9,19 @@
         "service_worker": "gruppy.js"
     },
     "commands": {
-	  "gruppy_toggle": {
-		"suggested_key": {
-		  "default": "Alt+G"
-		},
-		"description": "Toggle grouping"
-	  },
-	  "gruppy_close": {
-		"suggested_key": {
-		  "default": "Alt+Shift+G"
-		},
-		"description": "Close Group"
-	  }
-    },
-	"omnibox": { "keyword" : "gy" }
+      "gruppy_toggle": {
+        "suggested_key": {
+          "default": "Alt+G"
+        },
+        "description": "Toggle grouping"
+      },
+      "gruppy_close": {
+        "suggested_key": {
+          "default": "Alt+Shift+G"
+        },
+        "description": "Close Group"
+      }
+    }
 }
 
 

@@ -36,73 +36,39 @@
 chrome.commands.onCommand.addListener(async function(command) {
 
   // `tab` will either be a `tabs.Tab` instance or `undefined`.
-  let [tab] = await chrome.tabs.query({active: true, currentWindow: true });
+  let [tab, ...tail] = await chrome.tabs.query({highlighted: true, currentWindow: true });
 
   if(!tab) return;
-	
+
   if(command == 'gruppy_close') {
-  
-	if(tab.groupId != chrome.tabGroups.TAB_GROUP_ID_NONE) {
-	  tab = await chrome.tabs.query({ groupId: tab.groupId });
-	  chrome.tabs.remove(tab.map(t => t.id))
-	}
-	  
+
+    if(tab.groupId != chrome.tabGroups.TAB_GROUP_ID_NONE) {
+      tab = await chrome.tabs.query({ groupId: tab.groupId });
+      chrome.tabs.remove(tab.map(t => t.id))
+    }
+
   }
 
   if(command == 'gruppy_toggle') {
-  
-	if(tab.groupId == chrome.tabGroups.TAB_GROUP_ID_NONE) {
-	  chrome.tabs.group({tabIds:[tab.id]})
-	  return;
-	} 
-	else if (tab.index > 0) {
-		let [leftTab] = await chrome.tabs.query({ index:tab.index-1, currentWindow:true});
-		if(leftTab.groupId  == chrome.tabGroups.TAB_GROUP_ID_NONE) {
-			//
-		} else if (leftTab.groupId != tab.groupId) {
-		  chrome.tabs.group({tabIds:[tab.id], groupId:leftTab.groupId})
-		  return;
-		}
-	}
-	chrome.tabs.ungroup(tab.id)  
+
+    let tabIds = [tab, ...tail].map(t => t.id);
+
+    if(tab.groupId == chrome.tabGroups.TAB_GROUP_ID_NONE) {
+      chrome.tabs.group({tabIds:tabIds})
+      return;
+    }
+
+    let idx = Math.min(tab.index, ...tail.map(t=>t.index));
+    if (idx > 0) {
+      let [leftTab] = await chrome.tabs.query({ index:idx-1, currentWindow:true});
+      if(leftTab.groupId  == chrome.tabGroups.TAB_GROUP_ID_NONE) {
+          //
+      } else if (leftTab.groupId != tab.groupId) {
+        chrome.tabs.group({tabIds:tabIds, groupId:leftTab.groupId})
+        return;
+      }
+    }
+    chrome.tabs.ungroup(tabIds)
   }
 
 });
-
-
-// This event is fired each time the user updates the text in the omnibox,
-// as long as the extension's keyword mode is still active.
-chrome.omnibox.onInputChanged.addListener(
-  async function(text, suggest) {
-    console.log(`inputChanged: "${text}"`);
-	let groups = await chrome.tabGroups.query({})
-	groups = groups.filter(g => g.title.length > 0 && g.title.startsWith(text))
-	groups = groups.map(g => ({content: g.title, description: g.title}));
-    suggest(groups);
-  });
-
-// This event is fired with the user accepts the input in the omnibox.
-chrome.omnibox.onInputEntered.addListener(
-  async function(text) {
-    console.log('inputEntered: ' + text);
-	  
-	let [group] = await chrome.tabGroups.query({title:text})
-	
-	if(group) {
-		let [{id, windowId}] = await chrome.tabs.query({groupId: group.id});
-		chrome.windows.update(windowId, {focused: true})
-		chrome.tabs.update(id, {active:true})
-		let groups = await chrome.tabGroups.query({windowId:windowId})
-		for(let g of groups) {
-			chrome.tabGroups.update(g.id, {collapsed:group.id != g.id})
-		}
-
-	} else {
-	  let tabs = await chrome.tabs.query({highlighted: true, currentWindow: true});
-	  let groupId = await chrome.tabs.group({tabIds:tabs.map(t => t.id)});
-	  chrome.tabGroups.update(groupId, {title:text})
-	}
-	
-	
-	  
-  });
